@@ -1,14 +1,23 @@
 {
-  "name": "acopios",
+  "name": "make-it-better-together",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "firebase": "^7.14.6",
+    "grommet": "^2.13.0",
+    "immer": "^6.0.9",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "3.4.1",
+    "styled-components": "^5.1.1"
+  },
+  "devDependencies": {
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "1.19.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -17,8 +26,20 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "globals": {
+      "firebase": "readonly"
+    },
+    "rules": {
+      "prettier/prettier": "warn"
+    }
   },
+  "proxy": "http://localhost:5000",
   "browserslist": {
     "production": [
       ">0.2%",
