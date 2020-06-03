@@ -32,7 +32,37 @@ export async function getMyDonations(uid) {
       return { id: doc.id, ...d, createdAt: d.createdAt.toDate() };
     });
   } catch (e) {
+    throw new Error('Hubo un error consultando las donaciones');
+  }
+}
+
+export async function getAdminDonations() {
+  const firestore = firebase.firestore();
+  try {
+    const donationsSnaps = await firestore
+      .collection('donations')
+      .where('status', 'in', ['registered', 'received'])
+      .orderBy('createdAt', 'desc')
+      .get();
+    return donationsSnaps.docs.map(doc => {
+      const d = doc.data();
+      return { id: doc.id, ...d, createdAt: d.createdAt.toDate() };
+    });
+  } catch (e) {
     console.log(e);
-    throw new Error('Hubo un error creando la donación');
+    throw new Error('Hubo un error consultando las donaciones');
+  }
+}
+
+export async function updateDonation(uid, updates) {
+  const firestore = firebase.firestore();
+  try {
+    await firestore
+      .collection('donations')
+      .doc(uid)
+      .update(updates);
+  } catch (e) {
+    console.log(e);
+    throw new Error('Hubo un error consultando las donaciones');
   }
 }

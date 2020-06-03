@@ -1,31 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Box, Heading, Text, Paragraph, Button } from 'grommet';
 import Loading from 'components/Loading';
-import { useAuth } from 'containers/AuthProvider';
-import { createDonation } from 'api/donation';
-import { useDonatePage } from './reducer';
-// import DonateForm from './DonateForm';
+import { useAdminPage } from './reducer';
+import { format } from 'date-fns';
+import DonationEditor from './DonationEditor';
 
 export default function DonatePage() {
   const {
-    locations,
+    donations,
     status,
-    donationRegistered,
-    setError,
+    selectedDonation,
+    selectDonation,
+    update,
     goBack
-  } = useDonatePage();
-  const { user } = useAuth();
-  async function registerDonation(values) {
-    try {
-      await createDonation(values, user);
-      donationRegistered();
-    } catch (e) {
-      console.log(e);
-      setError(e);
-    }
-  }
-
+  } = useAdminPage();
   return (
     <Box flex="grow" overflow="auto" pad="medium">
       {status === 'loading' && (
@@ -33,28 +21,62 @@ export default function DonatePage() {
           <Loading />
         </Box>
       )}
-      {status === 'idle' && (
+      {(status === 'idle' || status === 'donation-updated') && (
         <Box>
           <Heading level="3" margin={{ vertical: 'small' }} textAlign="center">
-            Registra tu donación
+            Administrar donaciones
           </Heading>
-          <Box
-            margin={{ top: 'medium' }}
-            elevation="small"
-            pad="medium"
-            background="background-front"
-          >
-            {/* <DonateForm
-              locations={locations}
-              onSubmit={values => registerDonation(values)}
-            /> */}
-          </Box>
+          {status === 'donation-updated' && (
+            <Text color="status-ok">Donación Actualizada con éxito!</Text>
+          )}
+          {donations.map(d => (
+            <Box
+              key={d.id}
+              margin={{ top: 'medium' }}
+              elevation="small"
+              pad="medium"
+              background="background-front"
+            >
+              <Text size="xsmall" textAlign="end">
+                {format(d.createdAt, 'dd-MM-yyyy')}
+              </Text>
+              <Heading level="4" margin={{ bottom: 'small', top: '0' }}>
+                {d.location.name}
+              </Heading>
+              <Text>{d.donner}</Text>
+              <Paragraph color="text-xweak">{d.description}</Paragraph>
+              {d.status === 'registered' && (
+                <>
+                  <Text>
+                    Status: <strong>Por recibir</strong>
+                  </Text>
+                  <Button
+                    margin={{ top: 'small' }}
+                    label="Recibir Donación"
+                    onClick={() => selectDonation(d)}
+                  />
+                </>
+              )}
+              {d.status === 'received' && (
+                <>
+                  <Text>
+                    Status: <strong>Por entregar</strong>
+                  </Text>
+                  <Button
+                    margin={{ top: 'small' }}
+                    label="Entregar Donación"
+                    onClick={() => selectDonation(d)}
+                  />
+                </>
+              )}
+            </Box>
+          ))}
         </Box>
       )}
-      {status === 'donation-registered' && (
+      {status === 'editing-donation' && (
         <Box>
           <Heading level="3" margin={{ vertical: 'small' }} textAlign="center">
-            Registra tu donación
+            Donación
           </Heading>
           <Box
             margin={{ top: 'medium' }}
@@ -62,23 +84,17 @@ export default function DonatePage() {
             pad="medium"
             background="background-front"
           >
-            <Heading color="status-ok" leve="3">
-              ¡Gracias!
-            </Heading>
-            <Paragraph>
-              Hemos registrado tu donación. Por favor acércate al centro de
-              acopio que seleccionaste para completarla.
-            </Paragraph>
-            <Link to="/mis-donaciones">
-              <Button label="Ver mis donaciones" />
-            </Link>
+            <DonationEditor
+              donation={selectedDonation}
+              updateDonation={update}
+            />
           </Box>
         </Box>
       )}
       {status === 'error' && (
         <Box>
           <Heading level="3" margin={{ vertical: 'small' }} textAlign="center">
-            Registra tu donación
+            Administrar Donaciones
           </Heading>
           <Box
             margin={{ top: 'medium' }}
@@ -86,7 +102,11 @@ export default function DonatePage() {
             pad="medium"
             background="background-front"
           >
-            <Text color="status-critical" margin={{ bottom: 'medium'}}>
+            <Text
+              color="status-critical"
+              margin={{ bottom: 'medium' }}
+              size="small"
+            >
               Hubo un error. Por favor intenta más tarde
             </Text>
             <Button label="Regresar" onClick={() => goBack()} />

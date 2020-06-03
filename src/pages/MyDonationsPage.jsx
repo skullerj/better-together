@@ -45,6 +45,7 @@ export default function MyDonationsPage() {
           )}
           {donations.map(d => (
             <Box
+              key={d.id}
               margin={{ top: 'medium' }}
               elevation="small"
               pad="medium"

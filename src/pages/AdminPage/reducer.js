@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from 'react';
-import { loadLocations } from 'api/locations';
+import { getAdminDonations, updateDonation } from 'api/donation';
 
 const initialState = {
   status: 'loading',
@@ -12,10 +12,17 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'load-donations':
       return { ...state, status: 'idle', donations: action.donations };
-    case 'donation-registered':
+    case 'donations-updated':
       return {
         ...state,
-        status: 'donation-registered'
+        status: 'donation-updated',
+        donations: action.donations
+      };
+    case 'select-donation':
+      return {
+        ...state,
+        status: 'editing-donation',
+        selectedDonation: action.donation
       };
     case 'return':
       return {
@@ -29,21 +36,30 @@ const reducer = (state, action) => {
   }
 };
 
-export function useDonatePage() {
+export function useAdminPage() {
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    async function getLocations() {
+    async function getDonations() {
       try {
-        const locations = await loadLocations();
-        dispatch({ type: 'load-locations', locations });
+        const donations = await getAdminDonations();
+        dispatch({ type: 'load-donations', donations });
       } catch (e) {
         dispatch({ type: 'error', error: e.message });
       }
     }
-    getLocations();
+    getDonations();
   }, []);
-  function donationRegistered() {
-    dispatch({ type: 'donation-registered' });
+  async function update(id, updates) {
+    try {
+      await updateDonation(id, updates);
+      const donations = await getAdminDonations();
+      dispatch({ type: 'donations-updated', donations });
+    } catch (e) {
+      dispatch({ type: 'error', error: e.message });
+    }
+  }
+  function selectDonation(donation) {
+    dispatch({ type: 'select-donation', donation });
   }
   function goBack() {
     dispatch({ type: 'return' });
@@ -54,7 +70,8 @@ export function useDonatePage() {
   return {
     ...state,
     loading: state.status === 'loading',
-    donationRegistered,
+    update,
+    selectDonation,
     goBack,
     setError
   };

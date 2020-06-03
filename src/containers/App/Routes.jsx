@@ -79,7 +79,7 @@ function UserRoutes() {
 function AdminRoutes() {
   return (
     <Main>
-      <Content>
+      <Content background="background-back" flex="grow">
         <Route path="/" exact>
           <AdminPage />
         </Route>
@@ -107,7 +107,6 @@ function AdminRoutes() {
 
 function Routes() {
   const { role } = useAuth();
-  console.log(role);
   return (
     <Switch>
       {role === 'admin' && <AdminRoutes />}
