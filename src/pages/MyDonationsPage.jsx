@@ -72,7 +72,7 @@ export default function MyDonationsPage() {
               )}
               {d.status === 'delivered' && (
                 <Text size="small" color="status-ok">
-                  Hemos entregado esta donación. Gracias por ayudar!
+                  {`Hemos entregado esta donación a ${d.receivedBy}. Puedes contactarl@ al ${d.receivedPhone}. Gracias por ayudar!`}
                 </Text>
               )}
             </Box>
