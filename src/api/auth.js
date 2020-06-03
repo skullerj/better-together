@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/firestore';
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
 const TransaltedCodes = {
@@ -34,6 +35,24 @@ export async function loginWithFacebook() {
     return await auth.signInWithPopup(facebookProvider);
   } catch (e) {
     throw new Error(translateErrorCode(e.code));
+  }
+}
+
+export async function getUserProfile(uid) {
+  const firestore = firebase.firestore();
+  const userSnap = await firestore
+    .collection('profiles')
+    .doc(uid)
+    .get();
+  if (userSnap.exists) {
+    return await userSnap.data();
+  } else {
+    const newProfile = { role: 'user' };
+    await firestore
+      .collection('profiles')
+      .doc(uid)
+      .set(newProfile);
+    return newProfile;
   }
 }
 

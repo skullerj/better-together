@@ -1,14 +1,20 @@
 import React, { useMemo } from 'react';
 import produce from 'immer';
 import { useHistory } from 'react-router-dom';
-import { listenStateChanges, logout, loginWithFacebook } from 'api/auth';
+import {
+  listenStateChanges,
+  logout,
+  loginWithFacebook,
+  getUserProfile
+} from 'api/auth';
 import LoginPage from 'pages/LoginPage';
 import Loading from 'components/Loading';
 
 const initialState = {
   authenticated: false,
   user: {},
-  loading: true
+  loading: true,
+  role: null
 };
 
 const AuthContext = React.createContext([initialState, () => {}]);
@@ -19,12 +25,13 @@ export function useAuth() {
     throw new Error('useAuth must be used inside a AuthProvider');
   }
   const [authState] = context;
-  const { authenticated, user } = authState;
+  const { authenticated, user, role } = authState;
   const history = useHistory();
   const value = useMemo(
     () => ({
       authenticated,
       user,
+      role,
       loginWithFacebook: async (redirectAfter = false) => {
         await loginWithFacebook();
         if (redirectAfter) {
@@ -36,7 +43,7 @@ export function useAuth() {
         history.replace('/');
       }
     }),
-    [authenticated, history, user]
+    [authenticated, history, role, user]
   );
   return value;
 }
@@ -50,27 +57,33 @@ export function AuthProvider(props) {
       if (!user) {
         // User logs out
         setAuthState(
-          produce((auth: AuthState) => {
+          produce(auth => {
             auth.authenticated = false;
+            auth.loading = false;
           })
         );
       } else {
         // User is logged in
-        setAuthState(
-          produce((auth: AuthState) => {
-            auth.authenticated = true;
-            auth.user = user;
-          })
-        );
+        getUserProfile(user.uid).then(profile => {
+          console.log(profile);
+          setAuthState(
+            produce(auth => {
+              auth.authenticated = true;
+              auth.loading = false;
+              auth.user = user;
+              auth.role = profile.role;
+            })
+          );
+        });
       }
     });
   }, []);
   const value = React.useMemo(() => [authState, setAuthState], [authState]);
   return (
     <AuthContext.Provider value={value} {...props}>
-      {value.loading && <Loading />}
-      {!value.loading && value.authenticated && props.children}
-      {!value.loading && !value.authenticated && <LoginPage />}
+      {authState.loading && <Loading />}
+      {!authState.loading && authState.authenticated && props.children}
+      {!authState.loading && !authState.authenticated && <LoginPage />}
     </AuthContext.Provider>
   );
 }

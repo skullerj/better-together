@@ -1,15 +1,9 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Grommet } from 'grommet';
-
-import { AuthProvider } from 'containers/AuthProvider';
-
-const theme = {
+export default {
   global: {
     colors: {
       brand: {
-        dark: '#fd9c4d',
-        light: '#fd9c4d'
+        dark: '#FF9C43',
+        light: '#FF9C43'
       },
       background: {
         dark: '#1f1f1f',
@@ -64,7 +58,7 @@ const theme = {
       facebook: '#3B5998'
     },
     font: {
-      family: '"Open Sans"',
+      family: '"Lato"',
       size: '18px',
       height: '24px',
       maxWidth: '432px'
@@ -87,24 +81,6 @@ const theme = {
       border: {
         radius: '8px'
       }
-    },
-  },
-}
-
-function App() {
-  return (
-    <Grommet theme={theme} full themeMode="light">
-      <Router>
-        <AuthProvider>
-          <Switch>
-            <Route path="/">
-              <h1>User is authenticated</h1>
-            </Route>
-          </Switch>
-        </AuthProvider>
-      </Router>
-    </Grommet>
-  );
-}
-
-export default App;
+    }
+  }
+};
