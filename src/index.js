@@ -4,6 +4,7 @@ import App from 'containers/App';
 import * as serviceWorker from './serviceWorker';
 import firebase from 'firebase/app';
 import 'firebase/functions';
+import 'whatwg-fetch';
 
 // Get the firebase configuration from the /__/ reserved space on
 // firestore hosting

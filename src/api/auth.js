@@ -13,7 +13,7 @@ const TransaltedCodes = {
     'El código de verificación no es correcto. Intenta nuevamente.',
   'auth/code-expired':
     'El código de verificación caducó. Intenta enviando el mensaje nuevamente.',
-  'auth/popup-closed-by-user.':
+  'auth/popup-closed-by-user':
     'Cerraste la ventana de autenticación de Facebook'
 };
 
