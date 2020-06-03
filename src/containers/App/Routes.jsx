@@ -10,8 +10,8 @@ import MyDonationsPage from 'pages/MyDonationsPage';
 
 const Main = styled(Box)`
   position: fixed;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   top: 0;
   left: 0;
 `;
