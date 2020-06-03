@@ -2,19 +2,16 @@ import React, { useRef } from 'react';
 import { Drop, Box, Text } from 'grommet';
 import { Location } from 'grommet-icons';
 
-type MarkerProps = {
-  lat: number;
-  lng: number;
-  $hover?: boolean;
-  text?: string;
-};
-
-function Marker({ text = '', $hover }: MarkerProps) {
-  const ref = useRef<HTMLDivElement>(null);
+function Marker({ text = '', $hover, onClick }) {
+  const ref = useRef(null);
   return (
     <>
       <div style={{ position: 'absolute', top: -24, left: -24 }} ref={ref}>
-        <Location color={$hover ? 'brand' : 'dark-1'} size="large" />
+        <Location
+          color={$hover ? 'brand' : 'dark-1'}
+          size="large"
+          onClick={onClick}
+        />
       </div>
       {ref.current && $hover && (
         <Drop align={{ bottom: 'top' }} target={ref.current} plain>

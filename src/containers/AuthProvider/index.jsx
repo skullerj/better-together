@@ -7,6 +7,7 @@ import {
   loginWithFacebook,
   getUserProfile
 } from 'api/auth';
+import { Box } from 'grommet';
 import LoginPage from 'pages/LoginPage';
 import Loading from 'components/Loading';
 
@@ -81,7 +82,11 @@ export function AuthProvider(props) {
   const value = React.useMemo(() => [authState, setAuthState], [authState]);
   return (
     <AuthContext.Provider value={value} {...props}>
-      {authState.loading && <Loading />}
+      {authState.loading && (
+        <Box fill background="background-back" align="center" justify="center">
+          <Loading />
+        </Box>
+      )}
       {!authState.loading && authState.authenticated && props.children}
       {!authState.loading && !authState.authenticated && <LoginPage />}
     </AuthContext.Provider>

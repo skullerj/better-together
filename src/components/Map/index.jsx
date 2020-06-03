@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Box, TextInput, BoxProps } from 'grommet';
+import { Box, TextInput } from 'grommet';
 import { Location } from 'grommet-icons';
-import GoogleMapReact, { Coords, ChangeEventValue } from 'google-map-react';
+import GoogleMapReact from 'google-map-react';
 import Marker from './Marker';
 
 function getMapsApiKey() {
@@ -12,17 +12,6 @@ function getMapsApiKey() {
     throw new Error('Google maps Api key not configured');
   }
 }
-
-type MapProps = {
-  showCenter?: boolean;
-  defaultCenter?: Coords;
-  defaultZoom?: number;
-  onChange?: (change: ChangeEventValue) => void;
-  heigth: BoxProps['height'];
-  width: BoxProps['width'];
-  markers?: { lat: number; lng: number; key: string; text?: string }[];
-  hideSearch?: boolean;
-};
 
 let SearchBox: any;
 
@@ -53,8 +42,9 @@ function Map({
   heigth,
   width,
   markers = [],
-  hideSearch = false
-}: MapProps) {
+  hideSearch = false,
+  onMarkerClick = () => {}
+}) {
   const inputRef = useRef(null);
   function handleApiLoaded(map: any, maps: any) {
     // Set up the TextInput as a google maps SearchBox
@@ -89,6 +79,7 @@ function Map({
           defaultCenter={defaultCenter}
           options={(maps: any) => ({
             fullscreenControl: false,
+            clickableIcons: false,
             zoomControlOptions: {
               position: maps.ControlPosition.LEFT_CENTER
             }
@@ -102,6 +93,9 @@ function Map({
         >
           {markers.map(mark => (
             <Marker
+              onClick={() => {
+                onMarkerClick(mark);
+              }}
               lat={mark.lat}
               lng={mark.lng}
               key={mark.key}

@@ -19,6 +19,8 @@ const Main = styled(Box)`
 const Content = styled(Box)`
   width: 100%;
   padding-bottom: 60px;
+  height: 100vh;
+  overflow: auto;
 `;
 
 const NavBar = styled(Box)`
