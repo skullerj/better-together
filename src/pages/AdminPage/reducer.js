@@ -48,7 +48,7 @@ export function useAdminPage() {
       }
     }
     getDonations();
-  }, []);
+  }, [dispatch]);
   async function update(id, updates) {
     try {
       await updateDonation(id, updates);
